@@ -1,22 +1,23 @@
 package com.alexandrov.tests;
-
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.junit.jupiter.api.Test;
-
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DocxFileTest {
 
-    private String path = "./src/test/resources/doc.docx";
+    private String fileName = "doc.docx";
+    private String fileContent = "Практическое задание № 13";
 
     @Test
-    public void docxFileTest() throws Exception {
-        String result;
-        try (InputStream is = new FileInputStream(path)) {
-            result = new String(is.readAllBytes(), "UTF-8");
+    void docxFileTest() throws Exception {
+        String doc;
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(stream);
+            doc = wordMLPackage.getMainDocumentPart().getContent().toString();
         }
-        assertThat(result).contains("Чемпионат мира по футболу 2022");
+        assertThat(doc).contains(fileContent);
     }
 }
